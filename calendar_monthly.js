@@ -163,7 +163,7 @@ Module.register("calendar_monthly", {
 						innerSpan.id = "day" + day;
 						innerSpan.className = "daily";
 					}
-					if (dayEvents.length != 0) {
+					if (dayEvents.length !== 0) {
 						innerSpan.className = innerSpan.className + " events";
 						innerSpan.style = "--event-count: " + dayEvents.length + "; --event-color: " + dayEvents[0].color;
 					}
@@ -171,6 +171,9 @@ Module.register("calendar_monthly", {
 						innerSpan.style.color = 'red'; // Sunday
 					}
 					innerSpan.innerHTML = day;
+					if (dayEvents.length !== 0) {
+						innerSpan.innerHTML += `<div style="font-size: small">${dayEvents[0].title}</div>`;
+					}
 					day++;
 				} else if (day > monthLength && i > 0) {
 					// Last row, fill in empty space
@@ -231,7 +234,8 @@ Module.register("calendar_monthly", {
 				result.push({
 					startDate : startDate,
 					endDate: endDate,
-					color: event.color
+					color: event.color,
+					title: event.title
 				});
 			}
 			self.events = result;

@@ -9,6 +9,7 @@
 
 .weekRow {
 	background-color: #404854;
+	vertical-align: top;
 }
 
 #monthName {

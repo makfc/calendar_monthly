@@ -27,6 +27,7 @@
 .calendar-day {
 	text-align: center;
 	width: 14.2%;
+	max-width: 1px;
 }
 
 .monthPrev {
