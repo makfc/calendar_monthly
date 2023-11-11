@@ -36,6 +36,14 @@ Module.register("calendar_monthly", {
 		return ["moment.js"];
 	},
 
+	moment: function() {
+		// For Debug CALENDAR_EVENTS
+		// const now = moment();
+		// return moment([now.year(), 11, 25]);
+
+		return moment();
+	},
+
 	// Override start method
 	start: function() {
 		Log.log("Starting module: " + this.name);
@@ -47,12 +55,12 @@ Module.register("calendar_monthly", {
 
 	// Override dom generator
 	getDom: function() {
-		var year = moment().year();
-		var monthName = moment().format("MMMM");
-		var monthLength = moment().daysInMonth();
+		var year = this.moment().year();
+		var monthName = this.moment().format("MMMM");
+		var monthLength = this.moment().daysInMonth();
 
 		// Find first day of the month, LOCALE aware
-		var startingDay = moment().date(1).weekday();
+		var startingDay = this.moment().date(1).weekday();
 
 		var wrapper = document.createElement("table");
 		wrapper.className = 'xsmall';
@@ -112,7 +120,7 @@ Module.register("calendar_monthly", {
 		for (var i = 0; i <= 6; i++ ){
 			var bodyTD = document.createElement("td");
 			bodyTD.className = "calendar-header-day";
-			bodyTD.innerHTML = moment().weekday(i).format("ddd");
+			bodyTD.innerHTML = this.moment().weekday(i).format("ddd");
 			bodyTR.appendChild(bodyTD);
 		}
 		bodyContent.appendChild(bodyTR);
@@ -142,13 +150,13 @@ Module.register("calendar_monthly", {
 				if (j < startingDay && i == 0) {
 					// First row, fill in empty slots
 					innerSpan.className = "monthPrev";
-					innerSpan.innerHTML = moment().subtract(1, 'months').endOf('month').subtract((startingDay - 1) - j, 'days').date();
+					innerSpan.innerHTML = this.moment().subtract(1, 'months').endOf('month').subtract((startingDay - 1) - j, 'days').date();
 				} else if (day <= monthLength && (i > 0 || j >= startingDay)) {
-					var momentDay = moment().date(day);
+					var momentDay = this.moment().date(day);
 						var dayEvents = (this.events || []).filter(function(event) {
 							return momentDay.isSame(event.startDate, 'day') || momentDay.isBetween(event.startDate, event.endDate, 'day', "[)");
 						});
-						if (momentDay.isSame(moment(), 'day')) {
+						if (momentDay.isSame(this.moment(), 'day')) {
 						innerSpan.id = "day" + day;
 						innerSpan.className = "today";
 					} else {
@@ -163,7 +171,7 @@ Module.register("calendar_monthly", {
 				} else if (day > monthLength && i > 0) {
 					// Last row, fill in empty space
 					innerSpan.className = "monthNext";
-					innerSpan.innerHTML = moment().endOf('month').add(nextMonth, 'days').date();
+					innerSpan.innerHTML = this.moment().endOf('month').add(nextMonth, 'days').date();
 					nextMonth++;
 				}
 				squareContentInner.appendChild(innerSpan);
@@ -191,13 +199,13 @@ Module.register("calendar_monthly", {
 	},
 
 	scheduleUpdate: function(initialDelay = 0) {
-        let nextUpdate = moment().startOf('day').add({ days: 1, seconds: this.config.updateDelay + initialDelay});
-        let timeout = nextUpdate.diff(moment());
+        let nextUpdate = this.moment().startOf('day').add({ days: 1, seconds: this.config.updateDelay + initialDelay});
+        let timeout = nextUpdate.diff(this.moment());
         setTimeout(() => {
            this.update();
 		}, timeout);
 		if (this.config.debugging) {
-			Log.info(`Current time: ${moment()}`);
+			Log.info(`Current time: ${this.moment()}`);
         	Log.info(`${this.name} Next update scheduled at ${nextUpdate} which is in exactly ${timeout}ms`);
 		}
 
