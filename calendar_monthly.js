@@ -56,7 +56,7 @@ Module.register("calendar_monthly", {
 	// Override dom generator
 	getDom: function() {
 		var year = this.moment().year();
-		var monthName = this.moment().format("MMMM");
+		var monthName = this.moment().format("MMM");
 		var monthLength = this.moment().daysInMonth();
 
 		// Find first day of the month, LOCALE aware
