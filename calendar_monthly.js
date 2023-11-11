@@ -120,7 +120,7 @@ Module.register("calendar_monthly", {
 		for (var i = 0; i <= 6; i++ ){
 			var bodyTD = document.createElement("td");
 			bodyTD.className = "calendar-header-day";
-			bodyTD.innerHTML = this.moment().weekday(i).format("ddd");
+			bodyTD.innerHTML = this.moment().weekday(i).format("dd");
 			bodyTR.appendChild(bodyTD);
 		}
 		bodyContent.appendChild(bodyTR);
