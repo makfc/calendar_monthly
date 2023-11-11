@@ -153,18 +153,19 @@ Module.register("calendar_monthly", {
 					innerSpan.innerHTML = this.moment().subtract(1, 'months').endOf('month').subtract((startingDay - 1) - j, 'days').date();
 				} else if (day <= monthLength && (i > 0 || j >= startingDay)) {
 					var momentDay = this.moment().date(day);
-						var dayEvents = (this.events || []).filter(function(event) {
-							return momentDay.isSame(event.startDate, 'day') || momentDay.isBetween(event.startDate, event.endDate, 'day', "[)");
-						});
-						if (momentDay.isSame(this.moment(), 'day')) {
+					var dayEvents = (this.events || []).filter(function (event) {
+						return momentDay.isSame(event.startDate, 'day') || momentDay.isBetween(event.startDate, event.endDate, 'day', "[)");
+					});
+					if (momentDay.isSame(this.moment(), 'day')) {
 						innerSpan.id = "day" + day;
 						innerSpan.className = "today";
 					} else {
 						innerSpan.id = "day" + day;
-						innerSpan.className = "daily";}
-						if (dayEvents.length != 0) {
-							innerSpan.className = innerSpan.className + " events";
-							innerSpan.style = "--event-count: " + dayEvents.length + "; --event-color: " + dayEvents[0].color;
+						innerSpan.className = "daily";
+					}
+					if (dayEvents.length != 0) {
+						innerSpan.className = innerSpan.className + " events";
+						innerSpan.style = "--event-count: " + dayEvents.length + "; --event-color: " + dayEvents[0].color;
 					}
 					innerSpan.innerHTML = day;
 					day++;
