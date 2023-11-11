@@ -144,12 +144,19 @@ Module.register("calendar_monthly", {
 					innerSpan.className = "monthPrev";
 					innerSpan.innerHTML = moment().subtract(1, 'months').endOf('month').subtract((startingDay - 1) - j, 'days').date();
 				} else if (day <= monthLength && (i > 0 || j >= startingDay)) {
-					if (day == moment().date()) {
+					var momentDay = moment().date(day);
+						var dayEvents = (this.events || []).filter(function(event) {
+							return momentDay.isSame(event.startDate, 'day') || momentDay.isBetween(event.startDate, event.endDate, 'day', "[)");
+						});
+						if (momentDay.isSame(moment(), 'day')) {
 						innerSpan.id = "day" + day;
 						innerSpan.className = "today";
 					} else {
 						innerSpan.id = "day" + day;
-						innerSpan.className = "daily";
+						innerSpan.className = "daily";}
+						if (dayEvents.length != 0) {
+							innerSpan.className = innerSpan.className + " events";
+							innerSpan.style = "--event-count: " + dayEvents.length + "; --event-color: " + dayEvents[0].color;
 					}
 					innerSpan.innerHTML = day;
 					day++;
@@ -162,7 +169,7 @@ Module.register("calendar_monthly", {
 				squareContentInner.appendChild(innerSpan);
 				squareContent.appendChild(squareContentInner);
 				squareDiv.appendChild(squareContent);
-				bodyTD.appendChild(squareDiv);	
+				bodyTD.appendChild(squareDiv);
 				bodyTR.appendChild(bodyTD);
 			}
 			// Don't need any more rows if we've run out of days
@@ -174,7 +181,7 @@ Module.register("calendar_monthly", {
 				var bodyTR = document.createElement("tr");
 				bodyTR.className = "weekRow";
 			}
-		}	
+		}
 
 		bodyContent.appendChild(bodyTR);
 		wrapper.appendChild(bodyContent);
@@ -182,7 +189,7 @@ Module.register("calendar_monthly", {
 		this.loaded = true;
 		return wrapper;
 	},
-	
+
 	scheduleUpdate: function(initialDelay = 0) {
         let nextUpdate = moment().startOf('day').add({ days: 1, seconds: this.config.updateDelay + initialDelay});
         let timeout = nextUpdate.diff(moment());
@@ -193,11 +200,32 @@ Module.register("calendar_monthly", {
 			Log.info(`Current time: ${moment()}`);
         	Log.info(`${this.name} Next update scheduled at ${nextUpdate} which is in exactly ${timeout}ms`);
 		}
-        
+
     },
 
 	update: function() {
         this.updateDom(this.config.fadeSpeed * 1000);
         this.scheduleUpdate();
-    }
+    },
+
+	notificationReceived: function(notification, payload, sender) {
+		var self = this;
+		if (notification == "CALENDAR_EVENTS") {
+			var result = [];
+			for (event of payload) {
+				var startDate = moment(parseInt(event.startDate));
+				var endDate = moment(parseInt(event.endDate));
+
+				result.push({
+					startDate : startDate,
+					endDate: endDate,
+					color: event.color
+				});
+			}
+			self.events = result;
+			self.loaded = false;
+
+			self.updateDom(this.config.fadeSpeed * 1000);
+		}
+	}
 });
