@@ -167,6 +167,9 @@ Module.register("calendar_monthly", {
 						innerSpan.className = innerSpan.className + " events";
 						innerSpan.style = "--event-count: " + dayEvents.length + "; --event-color: " + dayEvents[0].color;
 					}
+					if (j === 0) {
+						innerSpan.style.color = 'red'; // Sunday
+					}
 					innerSpan.innerHTML = day;
 					day++;
 				} else if (day > monthLength && i > 0) {
