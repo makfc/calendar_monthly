@@ -6,7 +6,9 @@
 #calendar-table {
 	padding: 5px;
 	display: table;
-	width: 100%;
+	width: 135%;
+	font-size: 1rem;
+	line-height: 1.25;
 }
 
 #calendar-th {
