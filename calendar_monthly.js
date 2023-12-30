@@ -147,15 +147,14 @@ Module.register("calendar_monthly", {
 				var squareContentInner = document.createElement("div");
 				var innerSpan = document.createElement("span");
 
+				var momentDay;
 				if (j < startingDay && i == 0) {
+					momentDay = this.moment().subtract(1, 'months').endOf('month').subtract((startingDay - 1) - j, 'days');
 					// First row, fill in empty slots
 					innerSpan.className = "monthPrev";
-					innerSpan.innerHTML = this.moment().subtract(1, 'months').endOf('month').subtract((startingDay - 1) - j, 'days').date();
+					innerSpan.innerHTML = momentDay.date();
 				} else if (day <= monthLength && (i > 0 || j >= startingDay)) {
-					var momentDay = this.moment().date(day);
-					var dayEvents = (this.events || []).filter(function (event) {
-						return momentDay.isSame(event.startDate, 'day') || momentDay.isBetween(event.startDate, event.endDate, 'day', "[)");
-					});
+					momentDay = this.moment().date(day);
 					if (momentDay.isSame(this.moment(), 'day')) {
 						innerSpan.id = "day" + day;
 						innerSpan.className = "today";
@@ -163,23 +162,27 @@ Module.register("calendar_monthly", {
 						innerSpan.id = "day" + day;
 						innerSpan.className = "daily";
 					}
-					if (dayEvents.length !== 0) {
-						innerSpan.className = innerSpan.className + " events";
-						innerSpan.style = "--event-count: " + dayEvents.length + "; --event-color: " + dayEvents[0].color;
-					}
 					if (j === 0) {
 						innerSpan.style.color = 'red'; // Sunday
 					}
 					innerSpan.innerHTML = day;
-					if (dayEvents.length !== 0) {
-						innerSpan.innerHTML += `<div style="font-size: small">${dayEvents[0].title}</div>`;
-					}
 					day++;
 				} else if (day > monthLength && i > 0) {
+					momentDay = this.moment().endOf('month').add(nextMonth, 'days');
 					// Last row, fill in empty space
 					innerSpan.className = "monthNext";
-					innerSpan.innerHTML = this.moment().endOf('month').add(nextMonth, 'days').date();
+					innerSpan.innerHTML = momentDay.date();
 					nextMonth++;
+				}
+
+				// Add event to momentDay
+				var dayEvents = (this.events || []).filter(function (event) {
+					return momentDay.isSame(event.startDate, 'day') || momentDay.isBetween(event.startDate, event.endDate, 'day', "[)");
+				});
+				if (dayEvents.length !== 0) {
+					innerSpan.className = innerSpan.className + " events";
+					innerSpan.style = "--event-count: " + dayEvents.length + "; --event-color: " + dayEvents[0].color;
+					innerSpan.innerHTML += `<div style="font-size: small">${dayEvents[0].title}</div>`;
 				}
 				squareContentInner.appendChild(innerSpan);
 				squareContent.appendChild(squareContentInner);
